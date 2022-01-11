@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Butterfly Web Scraping | Devmountain Foundations</title>
+
+      <link
+        href="_static/pygments.css"
+        rel="stylesheet"
+        type="text/css"
+      />
+      <link href="_static/devmountain.css" rel="stylesheet" type="text/css" />
+          <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+          <link rel="stylesheet" type="text/css" href="_static/devmountain.css" />
+          <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
+          <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+
+      <script src="_static/pdfobject.min.js"></script>
+      
+  </head>
+  <body>
+      <div id="handouts-container">
+        <header id="page-header">
+            <p id="project-title">Devmountain Foundations</p>
+            <p id="page-title">Butterfly Web Scraping</p>
+              <p id="backlink">
+                <a href="/"> &laquo; Back to Homepage </a>
+              </p>
+        </header>
+
+        <nav id="page-toc"><ul>
+<li><a class="reference internal" href="#">Butterfly Web Scraping</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#setup">Setup</a></li>
+<li><a class="reference internal" href="#explore-the-data">Explore the Data</a></li>
+<li><a class="reference internal" href="#inspect-html-in-browser">Inspect HTML in Browser</a><ul>
+<li><a class="reference internal" href="#html-for-species-links">HTML for Species Links</a></li>
+<li><a class="reference internal" href="#html-for-individual-butterfly-data">HTML for Individual Butterfly Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#produce-a-list-of-all-butterfly-profile-links">Produce a list of all butterfly profile links</a></li>
+<li><a class="reference internal" href="#parse-a-single-butterfly-page">Parse a single butterfly page</a></li>
+<li><a class="reference internal" href="#produce-a-csv-of-butterfly-data">Produce a CSV of butterfly data</a></li>
+<li><a class="reference internal" href="#further-study">Further Study</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+
+        <main id="page-content">
+            <section class="section" id="butterfly-web-scraping">
+<h1>Butterfly Web Scraping</h1>
+<section class="section" id="introduction">
+<h2>Introduction</h2>
+<p>The goal of this exercise will be to get practice creating a dataset using
+web scraping. Web scraping is a immeasurably useful tool that allows you to
+programmatically, rather than manually, visit websites and copy down data to
+be added to your own local files.</p>
+<p>It’s common to find information on the internet that could be useful, if only
+the data were available in a tidy, download-able CSV. Web scraping provides a
+solution to that problem.</p>
+</section>
+<section class="section" id="setup">
+<h2>Setup</h2>
+<ol class="arabic simple">
+<li><p>Create a new folder on your commmand line and create a Python virtual environment.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span></code> install <code class="docutils literal notranslate"><span class="pre">beautifulsoup4</span></code> and <code class="docutils literal notranslate"><span class="pre">requests</span></code>.</p></li>
+<li><p>Create a new Python file.</p></li>
+<li><p>Spend 5-10 minutes reviewing the documentation for both <cite>Beautiful Soup</cite> and <cite>Requests</cite>.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Beautiful Soup (HTML Parsing Library): <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/" target="_blank">https://www.crummy.com/software/BeautifulSoup/bs4/doc/</a></p></li>
+<li><p>Requests (HTTP Client Library): <a class="reference external" href="https://docs.python-requests.org/en/latest/" target="_blank">https://docs.python-requests.org/en/latest/</a></p></li>
+</ul>
+</section>
+<section class="section" id="explore-the-data">
+<h2>Explore the Data</h2>
+<p>Take 5-10 minutes reviewing the butterfly data present on the UK Butterfly Conversation website.</p>
+<p>Link: <a class="reference external" href="https://butterfly-conservation.org/uk-butterflies/a-to-z" target="_blank">https://butterfly-conservation.org/uk-butterflies/a-to-z</a></p>
+<p>Then, answer the following questions.</p>
+<ul class="simple">
+<li><p>How is the site organized? If you want to create a butterfly dataset manually, how would you do it?</p></li>
+<li><p>Is the data for each butterfly uniform (same properties available for each)?</p></li>
+<li><p>Which properties are available for each butterfly?</p></li>
+</ul>
+</section>
+<section class="section" id="inspect-html-in-browser">
+<h2>Inspect HTML in Browser</h2>
+<section class="section" id="html-for-species-links">
+<h3>HTML for Species Links</h3>
+<p>In order to scrape this butterfly data, you will need to be able to grab both the <strong>links</strong>
+to each individual butterfly page, as well as the actual individual <strong>datapoints</strong> within
+each butterfly page.</p>
+<p>Any web scraping project is highly dependent on there being a consistent way to refer to
+the datapoints and data locations you’re trying to programmatically collect. You should <strong>always</strong>
+confirm that the HTML is in a state that will allow you to parse it easily.</p>
+<p>Go back to the Butterfly website and make sure you are using the Chrome web browser. Then, right
+click in on the “A-Z” page and click “Inspect”. This will open a panel where you can look at the
+HTML structure for this webpage.</p>
+<p>Next, you will use the Element Inspector to see what the HTML looks like for the link to
+each individual butterfly profile page. Click the element inspector icon as shown in the screenshot
+below.</p>
+<img alt="_images/inspector.png" src="_images/inspector.png" style="width: 80%;" />
+<p>Then, click on 2-3 of the Butterfly species links on the A-Z page. This should reveal the HTML
+for the Butterfly link in the Element inspector pane.</p>
+<p><strong>What is similar about the HTML for each Butterfly species link? Are all of the links wrapped
+in a similar element? Do they all have a similar class? What could you use to programmatically
+select ALL the links?</strong></p>
+</section>
+<section class="section" id="html-for-individual-butterfly-data">
+<h3>HTML for Individual Butterfly Data</h3>
+<p>Now, let’s inspect the HTML for an actual Butterfly’s profile page. Click the link for the
+Black Hairstreak butterfly, copied below for your convenience.</p>
+<p><a class="reference external" href="https://butterfly-conservation.org/butterflies/black-hairstreak" target="_blank">https://butterfly-conservation.org/butterflies/black-hairstreak</a></p>
+<p>Similar to the previous section, right click on the page and click “Inspect”. This will again
+open the panel to show the HTML for this webpage.</p>
+<p>Hover around the different data points and examine how the structure of the page works under
+the hood.</p>
+<ul class="simple">
+<li><p>How could you consistently locate the “Size and Family” data? Is it marked with a “class”?
+Does it always appear after a similar heading? Or is there some other identifier?</p></li>
+<li><p>How could you consistently locate the “Lifecycle” data?</p></li>
+<li><p>How could you consistently locate the URL for the main image on the page?</p></li>
+</ul>
+<p><strong>In the next few sections, you will use your general knowledge of the HTML structure
+for the data in order to systematically parse and collect this data using Python.</strong></p>
+</section>
+</section>
+<section class="section" id="produce-a-list-of-all-butterfly-profile-links">
+<h2>Produce a list of all butterfly profile links</h2>
+<p>The first step in this scraping project will be to create a <strong>list</strong> of all of the <strong>links</strong>
+to each individual butterfly page.</p>
+<p>You could do this manually by copying and pasting all of the butterfly links from the A-Z page,
+but it’s much easier to accomplish this task using Requests and Beautiful soup!</p>
+<p>First, we import those libraries to use.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+</pre></div>
+</div>
+<p>In your new Python file, you will first request the HTML for the A-Z page using <code class="docutils literal notranslate"><span class="pre">requests</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://butterfly-conservation.org/uk-butterflies/a-to-z&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This produces a <cite>Response</cite> object which contains a representation of the A-Z webpage we were
+viewing in the Chrome browser up until now.</p>
+<p>Next, we’ll pass the HTML response into BeautifulSoup so that we can do some of the fancy
+parsing that Beautiful Soup makes possible for web scraping.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://butterfly-conservation.org/uk-butterflies/a-to-z&quot;</span><span class="p">)</span>
+<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, the <cite>soup</cite> variable contains a nicely parsed, more searchable version of the HTML for
+the A-Z page. One of the things that you can do is find all instances of a given HTML element.
+For our purpose, let’s search for all the <code class="docutils literal notranslate"><span class="pre">&lt;a&gt;</span></code> tags on the page, which are hyper links!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">links</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s look at all of the URLs (a.k.a. the “href”) for each hyperlink.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">link</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Hopefully, from this loop, you can see that the links to all of the butterfly pages are within reach.
+Let’s make a new list of <strong>just</strong> the <code class="docutils literal notranslate"><span class="pre">href</span></code> attributes of each link using a list comprehension.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hrefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">link</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Then, let’s slice that list to include only the links that seem to go to butterfly profile pages.
+This can be deduced through a bit of trial and error, skipping over the href links that clearly
+are not individual butterfly pages, such as “/butterflies/why-butterflies-matter” and “#alpha-a”.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">butterfly_pages</span> <span class="o">=</span> <span class="n">hrefs</span><span class="p">[</span><span class="mi">39</span><span class="p">:</span><span class="mi">100</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Now, the only thing left is to add the full domain name to the front of each of the URLs we found.
+When you click on a Butterfly from the A-Z page, the URL looks like this in our browser:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">butterfly</span><span class="o">-</span><span class="n">conservation</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">butterflies</span><span class="o">/</span><span class="n">chalk</span><span class="o">-</span><span class="n">hill</span><span class="o">-</span><span class="n">blue</span>
+</pre></div>
+</div>
+<p>We have everything in there except the domain name, <code class="docutils literal notranslate"><span class="pre">https://butterfly-conservation.org</span></code>.
+So, we can use another list comprehension to create “real” URLs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">butterfly_pages</span> <span class="o">=</span> <span class="n">hrefs</span><span class="p">[</span><span class="mi">39</span><span class="p">:</span><span class="mi">100</span><span class="p">]</span>
+
+<span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;https://butterfly-conservation.org/&quot;</span> <span class="o">+</span> <span class="n">page</span> <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">butterfly_pages</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Great! Now you should have a list of all of the URLs for each butterfly page. We will
+use Beautiful Soup and requests in the next section (again) to get into the data on
+each individual page so we can start building the dataset.</strong></p>
+</section>
+<section class="section" id="parse-a-single-butterfly-page">
+<h2>Parse a single butterfly page</h2>
+<p>In this section, we’ll request the HTML for a single butterfly, and produce some Beautiful Soup
+code to be able to grab a few data points from the HTML structure.</p>
+<p>Eventually, we will want to grab the data for each butterfly profile page, so this is a good
+use case for a function! Here is a starter function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_butterfly</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Request and parse a single butterfly profile page, return a dict of data.&quot;&quot;&quot;</span>
+
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initially, our function will take in a single URL, such as the URL to the Chalk Hill Blue
+butterfly, and produce a dictionary of data about that butterfly. We’ll call our function like
+this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">get_butterfly</span><span class="p">(</span><span class="s2">&quot;https://butterfly-conservation.org/butterflies/chalk-hill-blue&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First, let’s find the name on the page. Thankfully, the name of each butterfly species can
+be found inside the <code class="docutils literal notranslate"><span class="pre">&lt;h1&gt;</span></code> element on the page, and there is only one! So, we can find
+the name using the Beautiful Soup <cite>find</cite> function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">h1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you run the code above, you get something that looks like this: <code class="docutils literal notranslate"><span class="pre">&lt;h1&gt;&lt;span&gt;Species</span> <span class="pre">Name&lt;/span&gt;&lt;/h1&gt;</span></code>.
+We’ll want to just peel off the name text from within that, which we can do with the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">h1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">text</span>
+<span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>      <span class="c1"># strip off whitespace at end of name</span>
+</pre></div>
+</div>
+<p>So, returning to the <cite>get_butterfly</cite> function, here is how it should look at this point.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_butterfly</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Request and parse a single butterfly profile page, return a dict of data.&quot;&quot;&quot;</span>
+
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>      <span class="c1"># strip off whitespace at end of name</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Let’s continue to build out the function. You can find the <code class="docutils literal notranslate"><span class="pre">&lt;li&gt;</span></code> element that has the
+data for “Family” with the following Beautiful Soup code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">family</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Family:*&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This produces the entire element– <code class="docutils literal notranslate"><span class="pre">&lt;li&gt;Family:</span> <span class="pre">Blues&lt;/li&gt;</span></code>. We can use the following
+helper function to peel off JUST the data that comes after the label <code class="docutils literal notranslate"><span class="pre">Family:</span></code> from this element.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">peel_data_from_element</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+  <span class="n">just_text</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>
+  <span class="k">return</span> <span class="n">just_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>So, returning to the <cite>get_butterfly</cite> function, here is how it should look, assuming
+the <cite>peel_data_from_element</cite> function is defined in the same file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_butterfly</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Request and parse a single butterfly profile page, return a dict of data.&quot;&quot;&quot;</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">h1</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>      <span class="c1"># strip off whitespace at end of name</span>
+
+    <span class="n">family</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Family:*&#39;</span><span class="p">))</span>
+    <span class="n">family_data</span> <span class="o">=</span> <span class="n">peel_data_from_element</span><span class="p">(</span><span class="n">family</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="n">family_data</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Call this function with a few butterfly profile URLs and make sure it works. Then,
+try to modify the function to also find the data for Size and Wing Span. As a hint,
+you can follow the exact pattern of code that worked for the Family data. Hover below
+to see the completed function if you need help.</p>
+<div class="admonition hint">
+<p class="admonition-title"><cite>get_butterfly</cite> function</p>
+<details class="admonition-body"><summary></summary><div class="admonition-body docutils container">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_butterfly</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Request and parse a single butterfly profile page, return a dict of data.&quot;&quot;&quot;</span>
+
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="n">family</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Family:*&#39;</span><span class="p">))</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Size:*&#39;</span><span class="p">))</span>
+    <span class="n">wing_span</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;li&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Wing Span:*&#39;</span><span class="p">))</span>
+
+
+
+    <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s1">&#39;family&#39;</span><span class="p">:</span> <span class="n">peel_data_from_element</span><span class="p">(</span><span class="n">family</span><span class="p">),</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">peel_data_from_element</span><span class="p">(</span><span class="n">size</span><span class="p">),</span>
+            <span class="s1">&#39;wing span&#39;</span><span class="p">:</span> <span class="n">peel_data_from_element</span><span class="p">(</span><span class="n">wing_span</span><span class="p">),</span>
+            <span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
+           <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">peel_data_from_element</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+  <span class="n">just_text</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>
+  <span class="k">return</span> <span class="n">just_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;: &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</details></div>
+</section>
+<section class="section" id="produce-a-csv-of-butterfly-data">
+<h2>Produce a CSV of butterfly data</h2>
+<p>First, review how to generate CSVs in Python. The documentation is a great place to start.</p>
+<ul class="simple">
+<li><p>Link to CSV Writer docs: <a class="reference external" href="https://docs.python.org/3/library/csv.html#csv.writer" target="_blank">https://docs.python.org/3/library/csv.html#csv.writer</a></p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>Using the list of Butterfly page links from the first part of the exercise, loop over
+each link and collect a list of dictionaries that contains the data for each butterfly.
+It’s a good idea to store this code in a new function, called <cite>process_each_link</cite>.</p></li>
+<li><p>Then, write a new function called <cite>write_csv</cite> that loops over the list of dictionaries
+and writes a new row to a CSV file for each butterfly page. The CSV should be formatted like this
+<code class="docutils literal notranslate"><span class="pre">name,url,family,wing</span> <span class="pre">span,size</span></code>.</p></li>
+</ol>
+</section>
+<section class="section" id="further-study">
+<h2>Further Study</h2>
+<p>You can continue to practice web scraping with either of the two options.</p>
+<ul class="simple">
+<li><p>Add more data to the butterfly dataset using BeautifulSoup.</p></li>
+<li><p>Produce another dataset from a site of your choice. E-commerce sites tend to
+be good sites for practicing web scraping.</p></li>
+</ul>
+</section>
+</section>
+
+        </main>
+
+        <footer id="page-footer">
+            <p>&copy; 2021 Devmountain</p>
+        </footer>
+      </div>
+
+      <script src="_static/main.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+  </body>
+</html>
